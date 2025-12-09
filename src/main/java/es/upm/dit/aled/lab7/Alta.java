@@ -54,5 +54,7 @@ public class Alta extends HttpServlet {
         String nombre = request.getParameter("nombre");
         String apellidos = request.getParameter("apellidos");
         String dni = request.getParameter("dni");
+     // 3. Crear objeto Paciente
+        Paciente nuevoPaciente = new Paciente(nombre, apellidos, dni.toUpperCase());
 	}
 }
