@@ -47,6 +47,12 @@ public class Alta extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//TODO
+		// 1. Recuperar PacienteRepository
 		PacienteRepository repo = (PacienteRepository) getServletContext().getAttribute("repo");
+		
+		// 2. Recuperar parámetros del formulario (alta.html)
+        String nombre = request.getParameter("nombre");
+        String apellidos = request.getParameter("apellidos");
+        String dni = request.getParameter("dni");
 	}
 }
