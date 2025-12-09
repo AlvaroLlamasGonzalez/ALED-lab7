@@ -15,7 +15,7 @@ import jakarta.servlet.http.*;
 /**
  * Servlet implementation class Alta
  */
-@WebServlet("/pepito")
+@WebServlet("/alta")
 public class Alta extends HttpServlet {
 
     @Override
