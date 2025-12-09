@@ -47,5 +47,6 @@ public class Alta extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//TODO
+		PacienteRepository repo = (PacienteRepository) getServletContext().getAttribute("repo");
 	}
 }
