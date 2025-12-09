@@ -1,6 +1,7 @@
 package es.upm.dit.aled.lab7;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -56,5 +57,26 @@ public class Alta extends HttpServlet {
         String dni = request.getParameter("dni");
      // 3. Crear objeto Paciente
         Paciente nuevoPaciente = new Paciente(nombre, apellidos, dni.toUpperCase());
+     // 4. Leer contenido de alta.html (lógica similar a doGet)
+        InputStream file = getServletContext().getResourceAsStream("/alta.html");
+		InputStreamReader reader1 = new InputStreamReader(file);
+		BufferedReader html = new BufferedReader(reader1);
+
+		String pagina = "", linea;
+		while((linea = html.readLine()) != null)
+			pagina += linea;
+        String mensaje;
+        String mensajeHtml;
+     // 5. Comprobar si el paciente ya está registrado (a través de PacienteRepository)
+        if (repo.findByDni(nuevoPaciente.getDni()) != null) {
+            // a) Paciente ya guardado: Mensaje de error (rojo)
+            mensaje = "Error: El paciente con DNI " + dni + " ya se encuentra registrado.";
+            mensajeHtml = "<span style=\"color: red;\">" + mensaje + "</span>";
+        } else {
+            // b) Paciente no guardado: Guardar y mensaje de éxito (verde)
+            repo.addPaciente(nuevoPaciente);
+            mensaje = "El paciente " + nombre + " " + apellidos + " ha sido dado de alta.";
+            mensajeHtml = "<span style=\"color: green;\">" + mensaje + "</span>";
+        }
 	}
 }
