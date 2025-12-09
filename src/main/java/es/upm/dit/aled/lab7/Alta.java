@@ -78,5 +78,13 @@ public class Alta extends HttpServlet {
             mensaje = "El paciente " + nombre + " " + apellidos + " ha sido dado de alta.";
             mensajeHtml = "<span style=\"color: green;\">" + mensaje + "</span>";
         }
+     // 6. Modificar el contenido de 'pagina', incluyendo el mensaje dentro de <h2></h2>
+        pagina = pagina.replace("<h2></h2>", "<h2>" + mensajeHtml + "</h2>");
+
+        // 7. Devuelve al cliente el contenido de la nueva pagina
+        PrintWriter out = response.getWriter();
+        response.setContentType("text/html");
+        out.println(pagina);
+        out.close();
 	}
 }
