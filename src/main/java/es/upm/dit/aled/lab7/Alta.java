@@ -47,44 +47,33 @@ public class Alta extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//TODO
-		// 1. Recuperar PacienteRepository
-		PacienteRepository repo = (PacienteRepository) getServletContext().getAttribute("repo");
-		
-		// 2. Recuperar parámetros del formulario (alta.html)
-        String nombre = request.getParameter("nombre");
-        String apellidos = request.getParameter("apellidos");
-        String dni = request.getParameter("dni");
-     // 3. Crear objeto Paciente
-        Paciente nuevoPaciente = new Paciente(nombre, apellidos, dni.toUpperCase());
-     // 4. Leer contenido de alta.html (lógica similar a doGet)
-        InputStream file = getServletContext().getResourceAsStream("/alta.html");
+		//Recuperar parámetros
+		String nombre = request.getParameter("nombre");
+		String apellidos = request.getParameter("apellidos");
+		String dni = request.getParameter("dni");
+
+		//Leer la plantilla HTML
+	    InputStream file = getServletContext().getResourceAsStream("/alta.html");
 		InputStreamReader reader1 = new InputStreamReader(file);
 		BufferedReader html = new BufferedReader(reader1);
-
 		String pagina = "", linea;
 		while((linea = html.readLine()) != null)
 			pagina += linea;
-        String mensaje;
-        String mensajeHtml;
-     // 5. Comprobar si el paciente ya está registrado (a través de PacienteRepository)
-        if (repo.findByDni(nuevoPaciente.getDni()) != null) {
-            // a) Paciente ya guardado: Mensaje de error (rojo)
-            mensaje = "Error: El paciente con DNI " + dni + " ya se encuentra registrado.";
-            mensajeHtml = "<span style=\"color: red;\">" + mensaje + "</span>";
-        } else {
-            // b) Paciente no guardado: Guardar y mensaje de éxito (verde)
-            repo.addPaciente(nuevoPaciente);
-            mensaje = "El paciente " + nombre + " " + apellidos + " ha sido dado de alta.";
-            mensajeHtml = "<span style=\"color: green;\">" + mensaje + "</span>";
-        }
-     // 6. Modificar el contenido de 'pagina', incluyendo el mensaje dentro de <h2></h2>
-        pagina = pagina.replace("<h2></h2>", "<h2>" + mensajeHtml + "</h2>");
 
-        // 7. Devuelve al cliente el contenido de la nueva pagina
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/html");
-        out.println(pagina);
-        out.close();
+		//Rellenar el mensaje
+		PacienteRepository repo = (PacienteRepository) getServletContext().getAttribute("repo");
+		if(repo.findByDni(dni) != null)
+			pagina = pagina.replace("<h2></h2>", "<h2>El paciente con DNI "+dni+" ya existe</h2>");
+		else {	
+			Paciente p = new Paciente(nombre, apellidos, dni);
+			repo.addPaciente(p);
+			pagina = pagina.replace("<h2></h2>", "<h2>El paciente se ha dado de alta</h2>");
+		}
+
+		//Enviar la respuesta
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		out.println(pagina);
+		out.close();
 	}
 }
